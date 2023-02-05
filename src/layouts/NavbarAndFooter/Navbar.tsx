@@ -32,7 +32,7 @@ export const Navbar = () => {
           </ul>
           <ul className="navbar-nav ms-auto">
             <li className="nav-item m-1">
-              <a type="button" className="btn btn-outline-lignt" href="#">
+              <a type="button" className="btn btn-outline-light" href="#">
                 Sign in
               </a>
             </li>
