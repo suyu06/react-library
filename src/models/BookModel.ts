@@ -1,0 +1,24 @@
+class BookModel {
+  //create a book model that can match with our backend book model.
+    id: number;
+    title: string;
+    author?: string;
+    description?: string;
+    copies?: number;
+    copiesAvailable?: string;
+    category?: string;
+    img?: string;
+
+    constructor(id: number,title: string,author: string,description: string,copies: number,copiesAvailable: string,
+        category: string,img: string) {
+            this.id = id;
+            this.title = title;
+            this.author = author;
+            this.description = description;
+            this.copies = copies;
+            this.copiesAvailable = copiesAvailable;
+             this.category = category;
+             this.img = img;
+  }
+}
+export default BookModel;
