@@ -1,6 +1,7 @@
 import { ReturnBook } from "./ReturnBook";
 import { useEffect, useState } from "react";
 import BookModel from "../../../models/BookModel";
+import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 export const Carousel = () => {
   // create a book array
@@ -53,9 +54,7 @@ export const Carousel = () => {
   // when in loading process, show: "Loading..."
   if (isLoading) {
     return (
-      <div className="container m-5">
-        <p>Loading....</p>
-      </div>
+      <SpinnerLoading/>
     );
   }
   // if there is error in fetch data
