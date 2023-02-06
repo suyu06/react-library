@@ -18,6 +18,19 @@ export const SearchBook: React.FC<{ book: BookModel }> = (props) => {
               />
             )}
           </div>
+          {/* mobile version for image part  */}
+          <div className="d-lg-none d-flex justify-content-center align-items-center">
+            {props.book.img ? (
+              <img src={props.book.img} width="123" height="196" alt="book" />
+            ) : (
+              <img
+                src={require("../../../Images/BooksImages/book-luv2code-1000.png")}
+                width="123"
+                height="196"
+                alt="book"
+              />
+            )}
+          </div>
         </div>
         {/* book information */}
         <div className="col-md-6">
@@ -28,7 +41,7 @@ export const SearchBook: React.FC<{ book: BookModel }> = (props) => {
           </div>
         </div>
         {/*  btn to the details page*/}
-        <div className="col-md-4 d-flex justify-content-centen align-items-center">
+        <div className="col-md-4 d-flex justify-content-center align-items-center">
           <a className="btn btn-md main-color text-white" href="#">
             View details
           </a>
