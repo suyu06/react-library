@@ -19,9 +19,11 @@ export const SerachBooksPage = () => {
   const [totalAmountofBooks, setTotalAmountofBooks] = useState(0);
   // total pages
   const [totalPages, setTotalPages] = useState(0);
-  //(S13-95,search by title)step1: create two array for search
+  //(S13-95,search by title)step1: create two useState for search
   const [search, setSearch] = useState("");
-  const [searchUrl,setSearchUrl] = useState("");
+  const [searchUrl, setSearchUrl] = useState("");
+  //(S13-98,search by category)step1: create useState for book category
+  const [categorySelection, setCategorySelection] = useState("Book category");
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -29,12 +31,12 @@ export const SerachBooksPage = () => {
       // 1.change the query parameter from "size = 9" to "size=5"
       // 2.change the query parameter page number from 0 to a  dynamically number
       // let url: string = `${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`;
-      let url : string = "";
-      //(S13-95,search by title)step2: get the url 
-      if(searchUrl === ''){
-          url =`${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`
-      }else{
-          url = baseUrl + searchUrl
+      let url: string = "";
+      //(S13-95,search by title)step2: get the url
+      if (searchUrl === "") {
+        url = `${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`;
+      } else {
+        url = baseUrl + searchUrl;
       }
       // fetching the url data
       const response = await fetch(url);
@@ -74,10 +76,10 @@ export const SerachBooksPage = () => {
       setHttpError(error.message);
     });
     //each time turn to a new page, it will go to the top of the page
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
     // pass current page , so each time we click on different page number, the data will be refreshed.
     //(S13-95,search by title)step3: add searchUrl parameter
-  }, [currentPage,searchUrl]);
+  }, [currentPage, searchUrl]);
   // when in loading process, show: "Loading..."
   if (isLoading) {
     return <SpinnerLoading />;
@@ -92,13 +94,33 @@ export const SerachBooksPage = () => {
   }
   //(S13-95,search by title)step4: create a const which hangles the search url
   const searchHandleChange = () => {
-    if(search===''){
-      setSearchUrl('');
-    }else{
-      setSearchUrl(`/search/findByTitleContaining?title=${search}&page=0&size=${booksPerPage}`)
+    if (search === "") {
+      setSearchUrl("");
+    } else {
+      setSearchUrl(
+        `/search/findByTitleContaining?title=${search}&page=0&size=${booksPerPage}`
+      );
     }
+  };
 
-  }
+  //(S13-98,search by category)step2: judge which category book will be selected
+  const categoryField = (value: string) => {
+    if (
+      value.toLocaleLowerCase() === "fe" ||
+      value.toLocaleLowerCase() === "be" ||
+      value.toLocaleLowerCase() === "data" ||
+      value.toLocaleLowerCase() === "devops"
+    ) {
+      setCategorySelection(value);
+      setSearchUrl(
+        `/search/findByCategory?category=${value}&page=0&size=${booksPerPage}`
+      );
+    } else {
+      setCategorySelection("All");
+      setSearchUrl(`?page=0&size=${booksPerPage}`);
+    }
+  };
+
   const indexOfLastBook: number = currentPage * booksPerPage;
   const indexOfFirstBook: number = indexOfLastBook - booksPerPage;
   let lastItem =
@@ -120,11 +142,15 @@ export const SerachBooksPage = () => {
                   placeholder="Search"
                   aria-labelledby="Search"
                   //(S13-95,search by title)step5:capture the input search value
-                  onChange={e => setSearch(e.target.value)}
+                  onChange={(e) => setSearch(e.target.value)}
                 />
-                <button className="btn btn-outline-success"
-                //(S13-95,search by title)step6:each time click the button, exeicute the search url
-                 onClick={()=> searchHandleChange()}>Search</button>
+                <button
+                  className="btn btn-outline-success"
+                  //(S13-95,search by title)step6:each time click the button, exeicute the search url
+                  onClick={() => searchHandleChange()}
+                >
+                  Search
+                </button>
               </div>
             </div>
             {/* category dropdown menu  */}
@@ -137,34 +163,36 @@ export const SerachBooksPage = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Category
+                  {/* (S13-98,search by category)step3:change category into dynamical value */}
+                  {categorySelection}
                 </button>
                 {/* drop down menu items */}
                 <ul
                   className="dropdown-menu"
                   aria-labelledby="dropdownMenuButton1"
                 >
-                  <li>
+                  {/* (S13-98,search by category)step4:add onclick listener to each item */}
+                  <li onClick={() => categoryField("All")}>
                     <a className="dropdown-item" href="#">
                       All
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField("fe")}>
                     <a className="dropdown-item" href="#">
                       Front End
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField("be")}>
                     <a className="dropdown-item" href="#">
                       Back End
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField("data")}>
                     <a className="dropdown-item" href="#">
                       Data
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() => categoryField("devops")}>
                     <a className="dropdown-item" href="#">
                       DevOps{" "}
                     </a>
@@ -175,31 +203,42 @@ export const SerachBooksPage = () => {
           </div>
           {/* short description of search result part */}
           {/* (S13-96,search by title) add code to judge if search result =0 scenario and have a different show page */}
-          {totalAmountofBooks >0 ? 
-          <>
-          <div className="mt-3">
-            {/* change the original 22 to a dynamical number */}
-            <h5> Number of results: ({totalAmountofBooks})</h5>
-          </div>
-          {/* 1 to 5 of 22 items :change into dynamical number */}
-          <p>{indexOfFirstBook +1} to {lastItem} of {totalAmountofBooks} items :</p>
-          {books.map((book) => (
-            <SearchBook book={book} key={book.id} />
-          ))}
-          </>
-          // if search result =0:
-          :
-          <div className="m-5">
-            <h3>
-              Can't find what you are looking for?
-            </h3>
-            <a  type= "button" className="btn main-color btn-md px-4 me-md-2 fw-bold text-white"  href="#">Library Services</a>
-          </div>
-          }
+          {totalAmountofBooks > 0 ? (
+            <>
+              <div className="mt-3">
+                {/* change the original 22 to a dynamical number */}
+                <h5> Number of results: ({totalAmountofBooks})</h5>
+              </div>
+              {/* 1 to 5 of 22 items :change into dynamical number */}
+              <p>
+                {indexOfFirstBook + 1} to {lastItem} of {totalAmountofBooks}{" "}
+                items :
+              </p>
+              {books.map((book) => (
+                <SearchBook book={book} key={book.id} />
+              ))}
+            </>
+          ) : (
+            // if search result =0:
+            <div className="m-5">
+              <h3>Can't find what you are looking for?</h3>
+              <a
+                type="button"
+                className="btn main-color btn-md px-4 me-md-2 fw-bold text-white"
+                href="#"
+              >
+                Library Services
+              </a>
+            </div>
+          )}
           {/*  only render pagination if totalPages is greater than 1 */}
-          {totalPages >1 && 
-          <Pagination currentPage={currentPage } totalPages={totalPages} paginate={paginate}/>
-        }
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              paginate={paginate}
+            />
+          )}
         </div>
       </div>
     </div>
