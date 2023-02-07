@@ -174,6 +174,9 @@ export const SerachBooksPage = () => {
             </div>
           </div>
           {/* short description of search result part */}
+          {/* (S13-96,search by title) add code to judge if search result =0 scenario and have a different show page */}
+          {totalAmountofBooks >0 ? 
+          <>
           <div className="mt-3">
             {/* change the original 22 to a dynamical number */}
             <h5> Number of results: ({totalAmountofBooks})</h5>
@@ -183,7 +186,17 @@ export const SerachBooksPage = () => {
           {books.map((book) => (
             <SearchBook book={book} key={book.id} />
           ))}
-          {/* only render <pagination/> if totalPages >1*/}
+          </>
+          // if search result =0:
+          :
+          <div className="m-5">
+            <h3>
+              Can't find what you are looking for?
+            </h3>
+            <a  type= "button" className="btn main-color btn-md px-4 me-md-2 fw-bold text-white"  href="#">Library Services</a>
+          </div>
+          }
+          {/*  only render pagination if totalPages is greater than 1 */}
           {totalPages >1 && 
           <Pagination currentPage={currentPage } totalPages={totalPages} paginate={paginate}/>
         }
