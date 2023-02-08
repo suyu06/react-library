@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import "./App.css";
+import { BookCheckoutPage } from "./layouts/BookCheckoutPage/BookCheckoutPage";
 import { HomePage } from "./layouts/HomePage/HomePage";
 import { Footer } from "./layouts/NavbarAndFooter/Footer";
 import { Navbar } from "./layouts/NavbarAndFooter/Navbar";
@@ -21,6 +22,9 @@ export const App = () => {
           </Route>
           <Route path="/search">
             <SearchBooksPage></SearchBooksPage>
+          </Route>
+          <Route path="/checkout/:bookId">
+            <BookCheckoutPage></BookCheckoutPage>
           </Route>
         </Switch>
       </div>
