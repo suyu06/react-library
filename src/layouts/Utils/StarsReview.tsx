@@ -1,11 +1,37 @@
 export const StarsReview: React.FC<{ rating: number; size: number }> = (
   props
 ) => {
+  // initialize the parameter instances
+  let rating = props.rating;
+  let fullStars = 0;
+  let halfStars = 0;
+  let emptyStars = 0;
+
+  if (rating !== undefined && rating > 0 && rating <= 5) {
+    for (let i = 0; i <= 4; i++) {
+      if (rating - 1 >= 0) {
+        // calculate how many full stars we can have
+        fullStars = fullStars + 1;
+        rating = rating - 1;
+      } else if (rating === 0.5) {
+        // calculate how many half stars we can have
+        halfStars = halfStars + 1;
+        rating = rating - 0.5;
+      } else if (rating === 0) {
+         // calculate how many empty stars we can have
+        emptyStars = emptyStars + 1;
+      } else {
+        break;
+      }
+    }
+  } else {
+    emptyStars = 5;
+  }
   return (
     <div>
-        {/* create an array for star, star-fill and half star, control the numbers of each star by the length of each array */}
+      {/* create an array for star, star-fill and half star, control the numbers of each star by the length of each array */}
       {/* start fill */}
-      {Array.from({ length: 2 }, (_, i) => (
+      {Array.from({ length: fullStars }, (_, i) => (
         <svg
           key={i}
           xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +46,7 @@ export const StarsReview: React.FC<{ rating: number; size: number }> = (
         </svg>
       ))}
       {/* half star */}
-      {Array.from({ length: 1 }, (_, i) => (
+      {Array.from({ length: halfStars }, (_, i) => (
         <svg
           key={i}
           xmlns="http://www.w3.org/2000/svg"
@@ -35,7 +61,7 @@ export const StarsReview: React.FC<{ rating: number; size: number }> = (
         </svg>
       ))}
       {/* star */}
-      {Array.from({ length: 2 }, (_, i) => (
+      {Array.from({ length: emptyStars }, (_, i) => (
         <svg
           key={i}
           xmlns="http://www.w3.org/2000/svg"
