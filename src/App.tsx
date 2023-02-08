@@ -8,20 +8,22 @@ import { SearchBooksPage } from "./layouts/SearchBooksPage/SearchBooksPage";
 
 export const App = () => {
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       <Navbar></Navbar>
-      <Switch>
-        <Route path="/" exact>
-          {/* <HomePage></HomePage> */}
-          <Redirect to='/home'></Redirect>
-        </Route>
-        <Route path='/home'>
-          <HomePage/>
-        </Route>
-        <Route path="/search">
-          <SearchBooksPage></SearchBooksPage>
-        </Route>
-      </Switch>
+      <div className="flex-grow-1">
+        <Switch>
+          <Route path="/" exact>
+            {/* <HomePage></HomePage> */}
+            <Redirect to="/home"></Redirect>
+          </Route>
+          <Route path="/home">
+            <HomePage />
+          </Route>
+          <Route path="/search">
+            <SearchBooksPage></SearchBooksPage>
+          </Route>
+        </Switch>
+      </div>
       <Footer></Footer>
     </div>
   );
