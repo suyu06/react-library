@@ -4,7 +4,7 @@ import { Pagination } from "../Utils/Pagination";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { SearchBook } from "./components/SearchBook";
 
-export const SerachBooksPage = () => {
+export const SearchBooksPage = () => {
   // create a book array
   const [books, setBooks] = useState<BookModel[]>([]);
   //for judging whether in loading process
