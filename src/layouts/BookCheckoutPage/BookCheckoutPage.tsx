@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import BookModel from "../../models/BookModel";
+import ReviewModel from "../../models/ReviewModel";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
 import { CheckoutAndReviewBox } from "./CheckoutAndReviewBox";
@@ -9,9 +10,16 @@ export const BookCheckoutPage = () => {
   const [book, setBook] = useState<BookModel>();
   const [isLoading, setIsLoading] = useState(true);
   const [httpError, setHttpError] = useState(null);
+
+  // create Review State
+  const [reviews, setReviews] = useState<ReviewModel[]>([]);
+  const [totalStars, setTotalStars] = useState(0);
+  const [isLoadingReview, setIsLoadingReview] = useState(true);
+
   //add two slashes in the url: http://localhost:3000/checkout/<bookId>
   const bookId = window.location.pathname.split("/")[2];
 
+// fetch book by ID useEffect
   useEffect(() => {
     const fetchBook = async () => {
       const baseUrl: string = `http://localhost:8080/api/books/${bookId}`;
@@ -47,7 +55,52 @@ export const BookCheckoutPage = () => {
     });
   }, []);
 
-  if (isLoading) {
+  // review useEffect
+  useEffect(() => {
+    const fetchBookReviews = async () => {
+      // review url, to call specific book
+      const reviewUrl: string = `http://localhost:8080/api/reviews/search/findByBookId?bookId=${bookId}`;
+      const responseReviews = await fetch(reviewUrl);
+      if (!responseReviews.ok) {
+        throw new Error("Something went wrong!");
+      }
+      // transfer to Json object
+      const responseJsonReviews = await responseReviews.json();
+      // get all the _embedeed data
+      const responseData = responseJsonReviews._embedded.reviews;
+      // create an empty arry to store the data
+      const loadedReviews: ReviewModel[] = [];
+      // initialize a review rating number,
+      let weightedStarReviews: number = 0;
+      // loop all the json data and store them into the array
+      for (const key in responseData) {
+        loadedReviews.push({
+            id: responseData[key].id,
+            userEmail: responseData[key].userEmail,
+            date: responseData[key].date,
+            rating: responseData[key].rating,
+            book_id: responseData[key].bookId,
+            reviewDescription: responseData[key].reviewDescription,
+        });
+        // get all the review rating
+        weightedStarReviews = weightedStarReviews + responseData[key].rating;
+    }
+    // deal with the weightedStarReviews, make it be a rounded number to the nearest point five.
+    if (loadedReviews) {
+      const round = (Math.round((weightedStarReviews / loadedReviews.length) * 2) / 2).toFixed(1);
+      setTotalStars(Number(round));
+  }
+
+  setReviews(loadedReviews);
+  setIsLoadingReview(false);
+    };
+    fetchBookReviews().catch((error: any) => {
+      setIsLoadingReview(false);
+      setHttpError(error.message);
+  });
+},[]);
+
+  if (isLoading || isLoadingReview) {
     return <SpinnerLoading />;
   }
   // if there is error in fetch data
@@ -82,10 +135,10 @@ export const BookCheckoutPage = () => {
               <h5 className="text-primary">{book?.author}</h5>
               <p className="lead">{book?.description}</p>
               {/* import Starsreview component */}
-              <StarsReview rating={1.5} size={32}/>
+              <StarsReview rating={1.5} size={32} />
             </div>
           </div>
-          <CheckoutAndReviewBox book = {book} mobile={false}/>
+          <CheckoutAndReviewBox book={book} mobile={false} />
         </div>
         <hr />
       </div>
@@ -111,10 +164,10 @@ export const BookCheckoutPage = () => {
             <h5 className="text-primary">{book?.author}</h5>
             <p className="lead">{book?.description}</p>
             {/* import Starsreview component */}
-            <StarsReview rating={1.5} size={32}/>
+            <StarsReview rating={1.5} size={32} />
           </div>
         </div>
-        <CheckoutAndReviewBox book = {book} mobile={true}/>
+        <CheckoutAndReviewBox book={book} mobile={true} />
         <hr />
       </div>
     </div>
