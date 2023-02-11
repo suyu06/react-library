@@ -4,6 +4,7 @@ import ReviewModel from "../../models/ReviewModel";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import { StarsReview } from "../Utils/StarsReview";
 import { CheckoutAndReviewBox } from "./CheckoutAndReviewBox";
+import { LatestReviews } from "./LatestReviews";
 
 export const BookCheckoutPage = () => {
   // create useState
@@ -135,12 +136,13 @@ export const BookCheckoutPage = () => {
               <h5 className="text-primary">{book?.author}</h5>
               <p className="lead">{book?.description}</p>
               {/* import Starsreview component */}
-              <StarsReview rating={1.5} size={32} />
+              <StarsReview rating={totalStars} size={32} />
             </div>
           </div>
           <CheckoutAndReviewBox book={book} mobile={false} />
         </div>
         <hr />
+        <LatestReviews reviews={reviews} bookId={book?.id} mobile={false}/>
       </div>
       {/* mobile version  */}
       {/* image part */}
@@ -164,11 +166,12 @@ export const BookCheckoutPage = () => {
             <h5 className="text-primary">{book?.author}</h5>
             <p className="lead">{book?.description}</p>
             {/* import Starsreview component */}
-            <StarsReview rating={1.5} size={32} />
+            <StarsReview rating={totalStars} size={32} />
           </div>
         </div>
         <CheckoutAndReviewBox book={book} mobile={true} />
         <hr />
+        <LatestReviews reviews={reviews} bookId={book?.id} mobile={true}/>
       </div>
     </div>
   );
