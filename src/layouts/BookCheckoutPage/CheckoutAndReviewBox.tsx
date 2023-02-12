@@ -7,6 +7,8 @@ export const CheckoutAndReviewBox: React.FC<{
   currentLoansCount: number;
   isAuthenticated: any;
   isCheckedOut: boolean;
+  checkoutBook: any;
+
 }> = (props) => {
   // add a function to judge how to present  sign in btn
   function buttonRender() {
@@ -14,7 +16,7 @@ export const CheckoutAndReviewBox: React.FC<{
     if (props.isAuthenticated) {
       // if the book is not checked out and user has borrowed less than 5 books, means user can borrow this book,
       if (!props.isCheckedOut && props.currentLoansCount < 5) {
-        return <button className="btn btn-success btn-lg">Checkout</button>;
+        return <button onClick={() => props.checkoutBook()} className="btn btn-success btn-lg">Checkout</button>;
       }
       // if user borrowed this book
       else if (props.isCheckedOut) {
