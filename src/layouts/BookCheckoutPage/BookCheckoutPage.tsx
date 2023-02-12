@@ -1,3 +1,4 @@
+import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import BookModel from "../../models/BookModel";
 import ReviewModel from "../../models/ReviewModel";
@@ -7,6 +8,9 @@ import { CheckoutAndReviewBox } from "./CheckoutAndReviewBox";
 import { LatestReviews } from "./LatestReviews";
 
 export const BookCheckoutPage = () => {
+  //add okta authentication
+  const { authState } = useOktaAuth();
+
   // create useState
   const [book, setBook] = useState<BookModel>();
   const [isLoading, setIsLoading] = useState(true);
@@ -17,10 +21,14 @@ export const BookCheckoutPage = () => {
   const [totalStars, setTotalStars] = useState(0);
   const [isLoadingReview, setIsLoadingReview] = useState(true);
 
+  // create loans count state
+  const [currentLoansCount, setCurrentLoansCount] = useState(0);
+  const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] = useState(true);
+
   //add two slashes in the url: http://localhost:3000/checkout/<bookId>
   const bookId = window.location.pathname.split("/")[2];
 
-// fetch book by ID useEffect
+  // fetch book by ID useEffect
   useEffect(() => {
     const fetchBook = async () => {
       const baseUrl: string = `http://localhost:8080/api/books/${bookId}`;
@@ -76,30 +84,45 @@ export const BookCheckoutPage = () => {
       // loop all the json data and store them into the array
       for (const key in responseData) {
         loadedReviews.push({
-            id: responseData[key].id,
-            userEmail: responseData[key].userEmail,
-            date: responseData[key].date,
-            rating: responseData[key].rating,
-            book_id: responseData[key].bookId,
-            reviewDescription: responseData[key].reviewDescription,
+          id: responseData[key].id,
+          userEmail: responseData[key].userEmail,
+          date: responseData[key].date,
+          rating: responseData[key].rating,
+          book_id: responseData[key].bookId,
+          reviewDescription: responseData[key].reviewDescription,
         });
         // get all the review rating
         weightedStarReviews = weightedStarReviews + responseData[key].rating;
-    }
-    // deal with the weightedStarReviews, make it be a rounded number to the nearest point five.
-    if (loadedReviews) {
-      const round = (Math.round((weightedStarReviews / loadedReviews.length) * 2) / 2).toFixed(1);
-      setTotalStars(Number(round));
-  }
+      }
+      // deal with the weightedStarReviews, make it be a rounded number to the nearest point five.
+      if (loadedReviews) {
+        const round = (
+          Math.round((weightedStarReviews / loadedReviews.length) * 2) / 2
+        ).toFixed(1);
+        setTotalStars(Number(round));
+      }
 
-  setReviews(loadedReviews);
-  setIsLoadingReview(false);
+      setReviews(loadedReviews);
+      setIsLoadingReview(false);
     };
     fetchBookReviews().catch((error: any) => {
       setIsLoadingReview(false);
       setHttpError(error.message);
-  });
-},[]);
+    });
+  }, []);
+  // loans count useEffect
+  useEffect(()=>{
+    const fetchUserCurrentLoansCount = async () =>{
+
+    }
+    fetchUserCurrentLoansCount().catch((error:any)=>{
+      setIsLoadingCurrentLoansCount(false);
+      setHttpError(error.message);
+      })
+
+  },[authState]);
+
+
 
   if (isLoading || isLoadingReview) {
     return <SpinnerLoading />;
@@ -142,7 +165,7 @@ export const BookCheckoutPage = () => {
           <CheckoutAndReviewBox book={book} mobile={false} />
         </div>
         <hr />
-        <LatestReviews reviews={reviews} bookId={book?.id} mobile={false}/>
+        <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
       </div>
       {/* mobile version  */}
       {/* image part */}
@@ -171,7 +194,7 @@ export const BookCheckoutPage = () => {
         </div>
         <CheckoutAndReviewBox book={book} mobile={true} />
         <hr />
-        <LatestReviews reviews={reviews} bookId={book?.id} mobile={true}/>
+        <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />
       </div>
     </div>
   );
