@@ -23,7 +23,8 @@ export const BookCheckoutPage = () => {
 
   // create loans count state
   const [currentLoansCount, setCurrentLoansCount] = useState(0);
-  const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] = useState(true);
+  const [isLoadingCurrentLoansCount, setIsLoadingCurrentLoansCount] =
+    useState(true);
 
   //add two slashes in the url: http://localhost:3000/checkout/<bookId>
   const bookId = window.location.pathname.split("/")[2];
@@ -110,21 +111,44 @@ export const BookCheckoutPage = () => {
       setHttpError(error.message);
     });
   }, []);
-  // loans count useEffect
-  useEffect(()=>{
-    const fetchUserCurrentLoansCount = async () =>{
 
-    }
-    fetchUserCurrentLoansCount().catch((error:any)=>{
+  // loans count useEffect
+  useEffect(() => {
+    const fetchUserCurrentLoansCount = async () => {
+      // make sure user is autenticated 
+      if (authState && authState.isAuthenticated) {
+        // endpoint we need to call 
+        const url = `http://localhost:8080/api/books/secure/currentloans/count`;
+        // need to specify the method type and headers
+        const requestOptions = {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+            "Content-Type": "application/json",
+          },
+        };
+        // fetch the data with the url and our method , headers
+        const currentLoansCountResponse = await fetch(url, requestOptions);
+        // if there is a failure of call api
+        if (!currentLoansCountResponse.ok) {
+          throw new Error("Something went wrong!");
+        }
+        // if fetching data is successful, transfer the data into json
+        const currentLoansCountResponseJson =
+          await currentLoansCountResponse.json();
+          //save the response into our current loans count
+        setCurrentLoansCount(currentLoansCountResponseJson);
+      }
+      // set the loading process finished
+      setIsLoadingCurrentLoansCount(false);
+    };
+    fetchUserCurrentLoansCount().catch((error: any) => {
       setIsLoadingCurrentLoansCount(false);
       setHttpError(error.message);
-      })
+    });
+  }, [authState]);
 
-  },[authState]);
-
-
-
-  if (isLoading || isLoadingReview) {
+  if (isLoading || isLoadingReview || isLoadingCurrentLoansCount) {
     return <SpinnerLoading />;
   }
   // if there is error in fetch data
@@ -162,7 +186,7 @@ export const BookCheckoutPage = () => {
               <StarsReview rating={totalStars} size={32} />
             </div>
           </div>
-          <CheckoutAndReviewBox book={book} mobile={false} />
+          <CheckoutAndReviewBox book={book} mobile={false} currentLoansCount={currentLoansCount} />
         </div>
         <hr />
         <LatestReviews reviews={reviews} bookId={book?.id} mobile={false} />
@@ -192,7 +216,7 @@ export const BookCheckoutPage = () => {
             <StarsReview rating={totalStars} size={32} />
           </div>
         </div>
-        <CheckoutAndReviewBox book={book} mobile={true} />
+        <CheckoutAndReviewBox book={book} mobile={true} currentLoansCount={currentLoansCount}/>
         <hr />
         <LatestReviews reviews={reviews} bookId={book?.id} mobile={true} />
       </div>
