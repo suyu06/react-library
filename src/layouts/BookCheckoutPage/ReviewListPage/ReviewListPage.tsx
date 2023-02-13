@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import ReviewModel from "../../../models/ReviewModel";
+import { Pagination } from "../../Utils/Pagination";
+import { Review } from "../../Utils/Review";
+import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 export const ReviewListPage = () => {
     // create useState for reviews
@@ -52,9 +55,47 @@ export const ReviewListPage = () => {
           setHttpError(error.message);
         });
       }, [currentPage]);
+      
+      if (isLoading) {
+        return (
+            <SpinnerLoading />
+        )
+    }
 
+    if (httpError) {
+        return (
+            <div className='container m-5'>
+                <p>{httpError}</p>
+            </div>
+        );
+    }
+    // pagination 
+    // the firs review and last review of each page
+    const indexOfLastReview: number = currentPage * reviewsPerPage;
+    const indexOfFirstReview: number = indexOfLastReview - reviewsPerPage;
+    // if current page is not the last page, last item is the current page *reviews per page;
+    // if current page is the last page, the last item is the last element of whole reviews
+    let lastItem = reviewsPerPage * currentPage <= totalAmountOfReviews ? 
+            reviewsPerPage * currentPage : totalAmountOfReviews;
 
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+   // review list page layout
     return(
-
+        <div className="container mt-5">
+        <div>
+            <h3>Comments: ({reviews.length})</h3>
+        </div>
+        <p>
+            {indexOfFirstReview + 1} to {lastItem} of {totalAmountOfReviews} items:
+        </p>
+        <div className="row">
+            {reviews.map(review => (
+                <Review review={review} key={review.id} />
+            ))}
+        </div>
+        {/* if there is more than page */}
+        {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />}
+    </div>
     )
 }
