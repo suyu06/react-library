@@ -4,9 +4,17 @@ import { StarsReview } from "./StarsReview";
 export const LeaveAReview: React.FC<{}> =(props)=>{
     // create state for the input stars
     const [starInput, setStarInput] = useState(0);
+    //create states for description
+    const [displayInput, setDisplayInput] = useState(false);
+    const [reviewDescription, setReviewDescription] = useState('');
+
     // create a function to get the number of stars
     function starValue(value: number) {
-        setStarInput(value);}
+        // for the star part
+        setStarInput(value);
+        //for the description part 
+        setDisplayInput(true);}
+
     return(
 <div className='dropdown' style={{ cursor: 'pointer' }}>
             <h5 className='dropdown-toggle' id='dropdownMenuButton1' data-bs-toggle='dropdown'>
@@ -27,6 +35,24 @@ export const LeaveAReview: React.FC<{}> =(props)=>{
                 <li><button onClick={() => starValue(5)} className='dropdown-item'>5 star</button></li>
             </ul>
             <StarsReview rating={starInput} size={32}/>
+            {/* description layout */}
+            {displayInput && 
+                <form method='POST' action='#'>
+                    <hr/>
+                    <div className='mb-3'>
+                        <label className='form-label'>
+                            Description
+                        </label>
+                        <textarea className='form-control' id='submitReviewDescription' placeholder='Optional'
+                            rows={3} onChange={e => setReviewDescription(e.target.value)}>
+                        </textarea>
+                    </div>
+
+                    <div>
+                        <button type='button' className='btn btn-primary mt-3'>Submit Review</button>
+                    </div>
+                </form>
+            }
             </div>
     );
 }
