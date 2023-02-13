@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StarsReview } from "./StarsReview";
 
-export const LeaveAReview: React.FC<{}> =(props)=>{
+export const LeaveAReview: React.FC<{submitReview: any}> =(props)=>{
     // create state for the input stars
     const [starInput, setStarInput] = useState(0);
     //create states for description
@@ -49,7 +49,9 @@ export const LeaveAReview: React.FC<{}> =(props)=>{
                     </div>
 
                     <div>
-                        <button type='button' className='btn btn-primary mt-3'>Submit Review</button>
+                        <button type='button' 
+                        onClick={() => props.submitReview(starInput, reviewDescription)}
+                        className='btn btn-primary mt-3'>Submit Review</button>
                     </div>
                 </form>
             }
