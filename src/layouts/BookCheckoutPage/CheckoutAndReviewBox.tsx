@@ -8,7 +8,7 @@ export const CheckoutAndReviewBox: React.FC<{
   isAuthenticated: any;
   isCheckedOut: boolean;
   checkoutBook: any;
-
+  isReviewLeft: boolean;
 }> = (props) => {
   // add a function to judge how to present  sign in btn
   function buttonRender() {
@@ -16,7 +16,14 @@ export const CheckoutAndReviewBox: React.FC<{
     if (props.isAuthenticated) {
       // if the book is not checked out and user has borrowed less than 5 books, means user can borrow this book,
       if (!props.isCheckedOut && props.currentLoansCount < 5) {
-        return <button onClick={() => props.checkoutBook()} className="btn btn-success btn-lg">Checkout</button>;
+        return (
+          <button
+            onClick={() => props.checkoutBook()}
+            className="btn btn-success btn-lg"
+          >
+            Checkout
+          </button>
+        );
       }
       // if user borrowed this book
       else if (props.isCheckedOut) {
@@ -34,6 +41,27 @@ export const CheckoutAndReviewBox: React.FC<{
       <Link to={"/login"} className="btn btn-success btn-lg">
         Sign in
       </Link>
+    );
+  }
+  // review render function
+  function reviewRender() {
+    // check if the user is authenticated and if the user has left a review
+    // if the user is authenticates and has not left a review
+    if (props.isAuthenticated && !props.isReviewLeft) {
+      return <p>Leave a review component here.</p>;
+    } else if (props.isAuthenticated && props.isReviewLeft) {
+      // if the user is authenticated and has already left a review
+      return (
+        <p>
+          <b>Thank you for your review!</b>
+        </p>
+      );
+    }
+    return (
+      <div>
+        <hr />
+        <p>Sign in to be able to leave a review.</p>
+      </div>
     );
   }
 
@@ -77,7 +105,7 @@ export const CheckoutAndReviewBox: React.FC<{
         <p className="mt-3">
           This number can change until placing order has been complete.
         </p>
-        <p>Sign in to be able to leave a review.</p>
+        {reviewRender()}
       </div>
     </div>
   );
