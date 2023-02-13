@@ -46,7 +46,7 @@ export const Loans = () => {
     });
     //each time this use effect is called, scroll to the top of the page.
     window.scrollTo(0, 0);
-  }, [authState]);
+  }, [authState, checkout]);
 
   if (isLoadingUserLoans) {
     return <SpinnerLoading />;
@@ -59,6 +59,25 @@ export const Loans = () => {
       </div>
     );
   }
+  async function returnBook(bookId: number) {
+    const url = `http://localhost:8080/api/books/secure/return/?bookId=${bookId}`;
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    };
+    //fetch the data using url and request url and headers
+    const returnResponse = await fetch(url, requestOptions);
+    //if failure
+    if (!returnResponse.ok) {
+      throw new Error("Something went wrong!");
+    }
+    // change the checkout state
+    setCheckout(!checkout);
+  }
+
   //html and css
   return (
     <div>
@@ -113,7 +132,7 @@ export const Loans = () => {
                   </div>
                 </div>
                 <hr />
-                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={false} />/
+                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={false} returnBook={returnBook}  />/
               </div>
             ))}
           </>
@@ -176,7 +195,7 @@ export const Loans = () => {
                   </div>
                 </div>
                 <hr />
-                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={true} />/
+                <LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={true} returnBook={returnBook}  />/
               </div>
             ))}
           </>
