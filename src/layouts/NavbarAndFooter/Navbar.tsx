@@ -43,6 +43,14 @@ export const Navbar = () => {
                 Search Books
               </NavLink>
             </li>
+            {/* if user is authenticated, there will be a shelf button in our Nav bar */}
+            {authState.isAuthenticated && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/shelf">
+                  Shelf
+                </NavLink>
+              </li>
+            )}
           </ul>
           <ul className="navbar-nav ms-auto">
             {/* add a authState judgement, if user is already authenticated, shows logout button;else sign in button */}
@@ -54,10 +62,7 @@ export const Navbar = () => {
               </li>
             ) : (
               <li>
-                <button
-                  className="btn btn-outline-light"
-                  onClick={handleLogout}
-                >
+                <button className="btn btn-outline-light" onClick={handleLogout}>
                   Logout
                 </button>
               </li>
