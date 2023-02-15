@@ -1,5 +1,6 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
+import { Redirect } from "react-router-dom";
 
 export const ManageLibraryPage = () =>{
     // useState
@@ -23,6 +24,11 @@ export const ManageLibraryPage = () =>{
         setChangeQuantityOfBooksClick(false);
         setMessagesClick(true);
     }
+    // if the user type is undefined, redirect to home page.
+    if (authState?.accessToken?.claims.userType === undefined) {
+        return <Redirect to='/home'/>
+    }
+
     return(
         <div className='container'>
             <div className='mt-5'>
