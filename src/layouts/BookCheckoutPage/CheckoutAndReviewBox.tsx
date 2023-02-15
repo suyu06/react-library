@@ -75,7 +75,7 @@ export const CheckoutAndReviewBox: React.FC<{
     // if in mobile version, use "card d-flex mt-5";if not, use"card col-3 container d-flex mb-5"
     <div
       className={
-        props.mobile ? "card d-flex mt-5" : "card col-3 container d-flex mb-5"
+        props.mobile ? "card d-flex mt-5" : "card col-4 container d-flex mb-5"
       }
     >
       <div className="card-body container">
