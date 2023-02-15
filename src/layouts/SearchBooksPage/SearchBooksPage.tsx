@@ -9,7 +9,7 @@ export const SearchBooksPage = () => {
   const [books, setBooks] = useState<BookModel[]>([]);
   //for judging whether in loading process
   const [isLoading, setIsLoading] = useState(true);
-  //API call failure scenario
+  // failure scenario
   const [httpError, setHttpError] = useState(null);
   // paginaton array
   const [currentPage, setCurrentPage] = useState(1);
