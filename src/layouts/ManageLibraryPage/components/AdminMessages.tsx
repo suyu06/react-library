@@ -1,6 +1,7 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
 import MessageModel from "../../../models/MessageModel";
+import { Pagination } from "../../Utils/Pagination";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
 
 export const AdminMessages = () => {
@@ -26,8 +27,7 @@ export const AdminMessages = () => {
         const fetchUserMessages = async () => {
             // only if user is authenticated
             if (authState && authState.isAuthenticated) {
-                const url = `http://localhost:8080/api/messages/search/findByClosed
-                /?closed=false&page=${currentPage - 1}&size=${messagesPerPage}`;
+                const url = `http://localhost:8080/api/messages/search/findByClosed/?closed=false&page=${currentPage - 1}&size=${messagesPerPage}`;
                 const requestOptions = {
                     method: 'GET',
                     headers: {
@@ -77,7 +77,22 @@ export const AdminMessages = () => {
     }
     // pagination const
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-    return(
 
+    return(
+        <div className='mt-3'>
+            {/* if there is messages: */}
+            {messages.length > 0 ? 
+                <>
+                    <h5>Pending Q/A: </h5>
+                    {messages.map(message => (
+                        <p>Questions that need a response</p>
+                    ))}
+                </>
+                :
+                //no messages
+                <h5>No pending Q/A</h5>
+            }
+            {totalPages > 1 && <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate}/>}
+        </div>
     );
 }
