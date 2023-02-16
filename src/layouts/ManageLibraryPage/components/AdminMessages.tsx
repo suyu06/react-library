@@ -1,5 +1,6 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useEffect, useState } from "react";
+import AdminMessageRequest from "../../../models/AdminMessageRequest";
 import MessageModel from "../../../models/MessageModel";
 import { Pagination } from "../../Utils/Pagination";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
@@ -60,7 +61,7 @@ export const AdminMessages = () => {
         })
         //each time turn to a new page, it will go to the top of the page
         window.scrollTo(0, 0);
-    },[authState, currentPage])
+    },[authState, currentPage, btnSubmit])
 
     // showing spinner if in loading process
     if (isLoadingMessages) {
@@ -76,6 +77,34 @@ export const AdminMessages = () => {
             </div>
         );
     }
+    
+    async function submitResponseToQuestion(id: number, response: string) {
+        const url = `http://localhost:8080/api/messages/secure/admin/message`;
+        // user is authenticated and both response request id and response exist:
+        if (authState && authState?.isAuthenticated && id !== null && response !== '') {
+            const messageAdminRequestModel: AdminMessageRequest = new AdminMessageRequest(id, response);
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(messageAdminRequestModel)
+            };
+            // fetch the data
+            const messageAdminRequestModelResponse = await fetch(url, requestOptions);
+            // if fetching meets error
+            if (!messageAdminRequestModelResponse.ok) {
+                throw new Error('Something went wrong!');
+            }
+            //reset the state of the btn
+            setBtnSubmit(!btnSubmit);
+        }
+    }
+
+
+
+
     // pagination const
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
