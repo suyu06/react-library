@@ -51,6 +51,12 @@ export const Navbar = () => {
                 </NavLink>
               </li>
             )}
+            {/* if user is authenticated as a role of admin, there will be a admin button in our Nav bar */}
+            {authState.isAuthenticated && authState.accessToken?.claims?.userType === 'admin' &&
+              <li className='nav-item'>
+                <NavLink className='nav-link' to='/admin'>Admin</NavLink>
+              </li>
+            }
           </ul>
           <ul className="navbar-nav ms-auto">
             {/* add a authState judgement, if user is already authenticated, shows logout button;else sign in button */}
