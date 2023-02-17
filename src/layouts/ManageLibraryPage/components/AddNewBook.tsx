@@ -1,5 +1,6 @@
 import { useOktaAuth } from "@okta/okta-react";
 import { useState } from "react";
+import AddBookRequest from "../../../models/AddBookRequest";
 
 export const AddNewBook = () => {
     // authState
@@ -40,6 +41,45 @@ export const AddNewBook = () => {
         reader.onerror = function (error) {
             console.log('Error', error);
         }
+    }
+
+    async function submitNewBook() {
+        // url string
+        const url = `http://localhost:8080/api/admin/secure/add/book`;
+        // user is authenticated, all fields are not null:
+        if (authState?.isAuthenticated && title !== '' && author !== '' && category !== 'Category' 
+            && description !== '' && copies >= 0) {
+                // add the info input as a new book object's properties
+                const book: AddBookRequest = new AddBookRequest(title, author, description, copies, category);
+                book.img = selectedImage;
+                const requestOptions = {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(book)
+                };
+                // fetch the data 
+                const submitNewBookResponse = await fetch(url, requestOptions);
+                if (!submitNewBookResponse.ok) {
+                    throw new Error('Something went wrong!');
+                }
+                // reset all the input area to original empty state
+                setTitle('');
+                setAuthor('');
+                setDescription('');
+                setCopies(0);
+                setCategory('Category');
+                setSelectedImage(null);
+                //display success banner 
+                setDisplayWarning(false);
+                setDisplaySuccess(true);
+            } else {
+                // display warning banner
+                setDisplayWarning(true);
+                setDisplaySuccess(false);
+            }
     }
     
 
@@ -107,7 +147,7 @@ export const AddNewBook = () => {
                         <input type='file' onChange={e => base64ConversionForImages(e)}/>
                         {/* add book btn */}
                         <div>
-                            <button type='button' className='btn btn-primary mt-3'>
+                            <button type='button' className='btn btn-primary mt-3'  onClick={submitNewBook}>
                                 Add Book
                             </button>
                         </div>
