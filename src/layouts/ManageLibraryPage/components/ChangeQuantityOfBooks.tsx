@@ -20,6 +20,9 @@ export const ChangeQuantityOfBooks = () => {
   const [totalAmountofBooks, setTotalAmountofBooks] = useState(0);
   // total pages
   const [totalPages, setTotalPages] = useState(0);
+   // delete book useState 
+  const [bookDelete, setBookDelete] = useState(false);
+
   
   // copy useEffect, isLoading and httpError from SearchBooksPage.tsx
   useEffect(() => {
@@ -64,7 +67,8 @@ export const ChangeQuantityOfBooks = () => {
     });
     // pass current page , so each time we click on different page number, the data will be refreshed.
     //(S13-95,search by title)step3: add searchUrl parameter
-  }, [currentPage]);
+  }, [currentPage,bookDelete]);
+
   // pagination functionality
   const indexOfLastBook: number = currentPage * booksPerPage;
   const indexOfFirstBook: number = indexOfLastBook - booksPerPage;
@@ -73,6 +77,8 @@ export const ChangeQuantityOfBooks = () => {
       ? booksPerPage * currentPage
       : totalAmountofBooks;
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const deleteBook = () => setBookDelete(!bookDelete);
 
   // when in loading process, show: "Loading..."
   if (isLoading) {
@@ -100,7 +106,7 @@ export const ChangeQuantityOfBooks = () => {
                         {indexOfFirstBook + 1} to {lastItem} of {totalAmountofBooks} items: 
                     </p>
                     {books.map(book => (
-                        <ChangeQuantityOfBook book={book} key={book.id} />
+                        <ChangeQuantityOfBook book={book} key={book.id} deleteBook={deleteBook}/>
 
                     ))}
                 </>
