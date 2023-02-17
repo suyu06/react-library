@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import BookModel from "../../../models/BookModel";
 import { Pagination } from "../../Utils/Pagination";
 import { SpinnerLoading } from "../../Utils/SpinnerLoading";
+import { ChangeQuantityOfBook } from "./ChangeQuantityOfBook";
 
 export const ChangeQuantityOfBooks = () => {
   // copy useSate from SearchBooksPage.tsx
@@ -99,7 +100,8 @@ export const ChangeQuantityOfBooks = () => {
                         {indexOfFirstBook + 1} to {lastItem} of {totalAmountofBooks} items: 
                     </p>
                     {books.map(book => (
-                       <p>display different quantity of books </p>
+                        <ChangeQuantityOfBook book={book} key={book.id} />
+
                     ))}
                 </>
                 :
